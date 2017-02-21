@@ -1,0 +1,111 @@
+# Problem set 3 - Minae Kim 
+rm(list=ls())
+
+# 1. Define a new S3 class:
+
+# create function to show 1 , 2, and 3 are only valid 
+
+door <- function(x){
+   if(x != 1 & x != 2 & x != 3){
+    return("Invalid")}
+    class(x)<-"door" 
+    return(as.list(x))
+}
+
+door(1)
+door(5) # showing invliad since the number 5 is not vaild  
+
+
+# 2. Create a method for door objects that is called PlayGame
+
+# Define whether the results of random lottery are the same as 1,2,and3 based on 
+# door funtion 
+PlayGame <- function(x) {
+    choice <- door(x)
+    random_lottery <- sample(c(1:3), 1)
+    if( random_lottery == choice) {
+        print("congratulating for a winning")
+    }
+    else if (! random_lottery == choice) {
+        print("Sorry for a losing")
+    }}
+
+
+PlayGame(1) # showing sorry for a losing since it is not valid 
+
+
+#3. Then do it again, this time using the S4 system.
+
+rm(list=ls())
+
+# define the class 
+
+setClass("door",
+         representation(
+             Door="numeric")
+        
+)
+
+
+# To check the validity of setclass with the condition that 1,2 and 3 are the only 
+# valid 
+
+setValidity("door", function(object){
+    if (object@Door!= 1 & object@Door!= 2 & object@Door!= 3) {
+        return("Sorry for a losing")
+    } }
+)
+
+setValidity("door", function(object){
+    
+        choice <- object@Door
+        random_lottery <- sample(c(1:3), 1)
+        if(random_lottery == choice) {
+            print("congratulating for a winning")
+        }
+        else if (! random_lottery == choice) {
+            print("Sorry for a losing")
+        }})
+
+
+setMethod("PlayGame", "door",
+          function(object){
+              choice <- object@Door
+              random_lottery <- sample(c(1:3), 1)
+              if(random_lottery == choice) {
+                  print("congratulating for a winning")
+              }
+              else if (! random_lottery == choice) {
+                  print("Sorry for a losing")
+              }})
+
+
+
+
+new("door", Door=3) # validity test 
+new("door", Door=4)
+
+# To make S4, create a new generic funtion of the given name  
+setGeneric("PlayGame", function(object="door") {
+    standardGeneric("PlayGame")
+})
+
+# To make S4, define a given function and class for a method  
+
+setMethod("PlayGame", "door",
+          function(object){
+              choice <- object@Door
+              random_lottery <- sample(c(1:3), 1)
+              if(random_lottery == choice) {
+              print("congratulating for a winning")
+    }
+              else if (! random_lottery == choice) {
+              print("Sorry for a losing")
+    }})
+
+
+# Test
+ A <- new("door", Door=1.5)
+ B <- new("door", Door=5)
+ C <- new("door", Door=3)
+ PlayGame(C)
